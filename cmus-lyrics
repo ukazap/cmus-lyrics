@@ -3,7 +3,7 @@
 if ! type cmus >/dev/null 2>&1; then
 
 echo ""
-echo "Cmus Is Not Installed!"
+echo "cmus is not installed!"
 echo ""
 
 exit 1
@@ -15,7 +15,7 @@ CMUSQ=$(cmus-remote -Q 2>/dev/null)
 if [[ -z "$CMUSQ" ]]; then
 
 echo ""
-echo "Cmus Is Not Running!"
+echo "cmus is not running!"
 echo ""
 
 exit 1
@@ -29,7 +29,7 @@ ALBUM=$(cmus-remote -Q 2>/dev/null | grep -m 1 'album' | cut -d " " -f 3-)
 if [[ -z "$ARTIST" ]]; then
 
 echo ""
-echo "Cmus Is Not Playing Anything!"
+echo "cmus is not playing anything!"
 echo ""
 
 else
