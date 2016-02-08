@@ -17,21 +17,30 @@ else
     else
       title=$(echo "$TITLE" | perl -MURI::Escape -ne 'chomp;print uri_escape($_),"\n"')
       artist=$(echo "$ARTIST" | perl -MURI::Escape -ne 'chomp;print uri_escape($_),"\n"')
-      lyrics_file="$HOME/Lyrics/$ARTIST - $ALBUM - $TITLE"
-      lyrics_not_found="Sorry, We don't have lyrics for this song yet."
+      lyrics_file="$HOME/Lyrics/$ARTIST/$ALBUM/$TITLE"
+      no_lyrics="Sorry, We don't have lyrics for this song yet."
       
+      # download lyrics to ~/Lyrics/
       if [ ! -f "$lyrics_file" ]; then
+        mkdir -p "$HOME/Lyrics/$ARTIST/$ALBUM"
         wget "http://makeitpersonal.co/lyrics?artist=$artist&title=$title" -O "$lyrics_file" -T 30 >/dev/null 2>&1
       fi
       
-      if grep -q "$lyrics_not_found" "$lyrics_file"; then
+      if grep -q "$no_lyrics" "$lyrics_file"; then
         rm -f "$lyrics_file"
         echo "duh, they don't have the lyrics for this song :/"
+      elif [[ ! -s "$lyrics_file" ]]; then
+        rm -f "$lyrics_file"
+        echo "duh, can't get the lyrics (either you're offline or it's an instrumental track) :/"
       else
         printf "*** $TITLE by $ARTIST from $ALBUM ***\n"|cat - "$lyrics_file" | less
       fi
     fi
   fi
 fi
+
+# remove empty directories before exit:
+find "$HOME/Lyrics/$ARTIST" -type d -empty -exec rm -rf "{}" \; >/dev/null 2>&1
+find "$HOME/Lyrics" -type d -empty -exec rm -rf "{}" \; >/dev/null 2>&1
 
 exit 0
